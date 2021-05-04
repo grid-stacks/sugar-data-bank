@@ -1,4 +1,4 @@
-from os import path
+from os import path, mkdir
 
 sdf_file = input("Give sdf file location: ")
 
@@ -7,6 +7,10 @@ if sdf_file:
 
     if file_extension == ".sdf":
         folder_name = path.dirname(sdf_file)
+        path_name = path.join(folder_name, "files")
+
+        if not path.exists(path_name):
+            mkdir(path_name)
 
         try:
             with open(sdf_file, "r") as f_content:
@@ -20,7 +24,7 @@ if sdf_file:
                     stripped_content = content.lstrip().rstrip()
 
                     file_name = stripped_content.split("\n", 1)[0] + ".sdf"
-                    complete_name = path.join(folder_name, file_name)
+                    complete_name = path.join(path_name, file_name)
 
                     file = open(complete_name, "w")
                     file.write(stripped_content)
