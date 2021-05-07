@@ -4,6 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+sanitize-filename = "*"
+pathvalidate = "*"
 
 [dev-packages]
 

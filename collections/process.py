@@ -1,6 +1,35 @@
 from os import path, mkdir
+import csv
+from pathvalidate import sanitize_filename
 
+# E:/---WorkFiles/Computational Chemistry/Drug Discovery/Sugar Bank/collections/fructose/PubChem_compound_text_fructose_summary.csv
+csv_file = input("Give csv file location: ")
+# E:/---WorkFiles/Computational Chemistry/Drug Discovery/Sugar Bank/collections/fructose/PubChem_compound_text_fructose_records.sdf
 sdf_file = input("Give sdf file location: ")
+
+info_dict = {}
+
+if csv_file:
+    file_extension = csv_file[-4:]
+
+    if file_extension == ".csv":
+        try:
+            with open(csv_file, "r") as f_content:
+                for line in csv.DictReader(f_content):
+                    info_dict[line["cid"]] = {
+                        "name": sanitize_filename(line["cmpdname"].replace(" ", "-").replace(";", "-")),
+                        "mw": line["mw"]
+                    }
+
+        except IOError:
+            print("CSV file not exists! Try again.")
+
+    else:
+        print("Please provide a csv file! Try again.")
+
+else:
+    print("You didn't provided any csv file name! Try again.")
+
 
 if sdf_file:
     file_extension = sdf_file[-4:]
@@ -22,8 +51,16 @@ if sdf_file:
 
                 for content in splitted_parts:
                     stripped_content = content.lstrip().rstrip()
+                    stripped_content = stripped_content.split("\n", 1)[0]
 
-                    file_name = stripped_content.split("\n", 1)[0] + ".sdf"
+                    selected_row = info_dict[stripped_content]
+
+                    name = "___" + \
+                        selected_row["name"] if selected_row["name"] else ""
+                    mw = "___" + \
+                        selected_row["mw"] if selected_row["mw"] else ""
+
+                    file_name = stripped_content + name + mw + ".sdf"
                     complete_name = path.join(path_name, file_name)
 
                     file = open(complete_name, "w")
@@ -32,13 +69,13 @@ if sdf_file:
 
                 print("Report:")
                 print("Total files: " + str(total_parts))
-                print("Output folder: " + folder_name)
+                print("Output folder: " + path_name)
 
         except IOError:
-            print("File not exists! Try again.")
+            print("SDF File not exists! Try again.")
 
     else:
         print("Please provide a sdf file! Try again.")
 
 else:
-    print("You didn't provided any file name! Try again.")
+    print("You didn't provided any sdf file name! Try again.")

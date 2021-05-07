@@ -1,0 +1,5 @@
+autopep8==1.5.7
+pathvalidate==2.4.1
+pycodestyle==2.7.0
+sanitize-filename==1.2.0
+toml==0.10.2
