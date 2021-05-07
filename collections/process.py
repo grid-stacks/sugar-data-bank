@@ -1,5 +1,6 @@
 from os import path, mkdir
 import csv
+from sanitize_filename import sanitize
 from pathvalidate import sanitize_filename
 
 # E:/---WorkFiles/Computational Chemistry/Drug Discovery/Sugar Bank/collections/fructose/PubChem_compound_text_fructose_summary.csv
@@ -16,6 +17,9 @@ if csv_file:
         try:
             with open(csv_file, "r") as f_content:
                 for line in csv.DictReader(f_content):
+                    # print(sanitize(line[1].replace(" ", "-")))
+                    # print(line)
+                    # print("")
                     info_dict[line["cid"]] = {
                         "name": sanitize_filename(line["cmpdname"].replace(" ", "-").replace(";", "-")),
                         "mw": line["mw"]
@@ -51,16 +55,16 @@ if sdf_file:
 
                 for content in splitted_parts:
                     stripped_content = content.lstrip().rstrip()
-                    stripped_content = stripped_content.split("\n", 1)[0]
 
-                    selected_row = info_dict[stripped_content]
+                    name = "___" + info_dict[stripped_content.split(
+                        "\n", 1)[0]]["name"] if info_dict[stripped_content.split(
+                            "\n", 1)[0]]["name"] else ""
+                    mw = "___" + info_dict[stripped_content.split(
+                        "\n", 1)[0]]["mw"] if info_dict[stripped_content.split(
+                            "\n", 1)[0]]["mw"] else ""
 
-                    name = "___" + \
-                        selected_row["name"] if selected_row["name"] else ""
-                    mw = "___" + \
-                        selected_row["mw"] if selected_row["mw"] else ""
-
-                    file_name = stripped_content + name + mw + ".sdf"
+                    file_name = stripped_content.split(
+                        "\n", 1)[0] + name + mw + ".sdf"
                     complete_name = path.join(path_name, file_name)
 
                     file = open(complete_name, "w")
